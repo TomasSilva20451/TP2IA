@@ -5,6 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_curve, auc
+from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt
 
 # Carregar dados
@@ -60,10 +61,20 @@ train_evaluate_model(log_reg, X_train_scaled, y_train, X_test_scaled, y_test)
 #mlp = MLPClassifier(max_iter=1000)
 #train_evaluate_model(mlp, X_train_scaled, y_train, X_test_scaled, y_test)
 
-# Árvore de Decisão com Poda
-decision_tree_poda = DecisionTreeClassifier(max_depth=5, min_samples_split=10, min_samples_leaf=5)
-train_evaluate_model(decision_tree_poda, X_train, y_train, X_test, y_test)
+# Árvore de Decisão com Poda 1
+#decision_tree_poda = DecisionTreeClassifier(max_depth=5, min_samples_split=10, min_samples_leaf=5)
+#train_evaluate_model(decision_tree_poda, X_train, y_train, X_test, y_test)
 
-# Rede Neural com Hiperparâmetros Ajustados
-mlp_ajustada = MLPClassifier(hidden_layer_sizes=(100, 50, 25), max_iter=1000, learning_rate_init=0.001)
-train_evaluate_model(mlp_ajustada, X_train_scaled, y_train, X_test_scaled, y_test)
+# Rede Neural com Hiperparâmetros Ajustados 1
+#mlp_ajustada = MLPClassifier(hidden_layer_sizes=(100, 50, 25), max_iter=1000, learning_rate_init=0.001)
+#train_evaluate_model(mlp_ajustada, X_train_scaled, y_train, X_test_scaled, y_test)
+
+# Árvore de Decisão com Grid Search 2
+parametros_arvore = {'max_depth': [3, 5, 7], 'min_samples_split': [2, 5, 10], 'min_samples_leaf': [1, 2, 4]}
+grid_search_arvore = GridSearchCV(DecisionTreeClassifier(), parametros_arvore, cv=5)
+train_evaluate_model(grid_search_arvore, X_train, y_train, X_test, y_test)
+
+# Rede Neural com Grid Search 2
+parametros_mlp = {'hidden_layer_sizes': [(50,), (100,50), (100,50,25)], 'learning_rate_init': [0.001, 0.01]}
+grid_search_mlp = GridSearchCV(MLPClassifier(max_iter=1000), parametros_mlp, cv=5)
+train_evaluate_model(grid_search_mlp, X_train_scaled, y_train, X_test_scaled, y_test)
