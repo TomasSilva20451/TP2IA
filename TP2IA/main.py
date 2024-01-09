@@ -53,9 +53,17 @@ log_reg = LogisticRegression(max_iter=1000)
 train_evaluate_model(log_reg, X_train_scaled, y_train, X_test_scaled, y_test)
 
 # Árvore de Decisão
-decision_tree = DecisionTreeClassifier()
-train_evaluate_model(decision_tree, X_train, y_train, X_test, y_test)
+#decision_tree = DecisionTreeClassifier()
+#train_evaluate_model(decision_tree, X_train, y_train, X_test, y_test)
 
 # Rede Neural (Perceptron Multicamadas)
-mlp = MLPClassifier(max_iter=1000)
-train_evaluate_model(mlp, X_train_scaled, y_train, X_test_scaled, y_test)
+#mlp = MLPClassifier(max_iter=1000)
+#train_evaluate_model(mlp, X_train_scaled, y_train, X_test_scaled, y_test)
+
+# Árvore de Decisão com Poda
+decision_tree_poda = DecisionTreeClassifier(max_depth=5, min_samples_split=10, min_samples_leaf=5)
+train_evaluate_model(decision_tree_poda, X_train, y_train, X_test, y_test)
+
+# Rede Neural com Hiperparâmetros Ajustados
+mlp_ajustada = MLPClassifier(hidden_layer_sizes=(100, 50, 25), max_iter=1000, learning_rate_init=0.001)
+train_evaluate_model(mlp_ajustada, X_train_scaled, y_train, X_test_scaled, y_test)
