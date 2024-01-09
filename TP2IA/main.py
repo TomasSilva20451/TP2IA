@@ -6,7 +6,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, confusion_matrix, roc_curve, auc
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import randint
 import matplotlib.pyplot as plt
+
 
 # Carregar dados
 dados_ml_path = '/Users/tomassilva/Documents/TP2IA/Dados_ML.xlsx'
@@ -70,11 +73,34 @@ train_evaluate_model(log_reg, X_train_scaled, y_train, X_test_scaled, y_test)
 #train_evaluate_model(mlp_ajustada, X_train_scaled, y_train, X_test_scaled, y_test)
 
 # Árvore de Decisão com Grid Search 2
-parametros_arvore = {'max_depth': [3, 5, 7], 'min_samples_split': [2, 5, 10], 'min_samples_leaf': [1, 2, 4]}
-grid_search_arvore = GridSearchCV(DecisionTreeClassifier(), parametros_arvore, cv=5)
-train_evaluate_model(grid_search_arvore, X_train, y_train, X_test, y_test)
+#parametros_arvore = {'max_depth': [3, 5, 7], 'min_samples_split': [2, 5, 10], 'min_samples_leaf': [1, 2, 4]}
+#grid_search_arvore = GridSearchCV(DecisionTreeClassifier(), parametros_arvore, cv=5)
+#train_evaluate_model(grid_search_arvore, X_train, y_train, X_test, y_test)
 
 # Rede Neural com Grid Search 2
-parametros_mlp = {'hidden_layer_sizes': [(50,), (100,50), (100,50,25)], 'learning_rate_init': [0.001, 0.01]}
-grid_search_mlp = GridSearchCV(MLPClassifier(max_iter=1000), parametros_mlp, cv=5)
-train_evaluate_model(grid_search_mlp, X_train_scaled, y_train, X_test_scaled, y_test)
+#parametros_mlp = {'hidden_layer_sizes': [(50,), (100,50), (100,50,25)], 'learning_rate_init': [0.001, 0.01]}
+#grid_search_mlp = GridSearchCV(MLPClassifier(max_iter=1000), parametros_mlp, cv=5)
+#train_evaluate_model(grid_search_mlp, X_train_scaled, y_train, X_test_scaled, y_test)
+
+
+# Parâmetros para Random Search na Árvore de Decisão
+param_dist_arvore = {
+    "max_depth": randint(1, 10),
+    "min_samples_split": randint(2, 20),
+    "min_samples_leaf": randint(1, 20)
+}
+
+# Random Search na Árvore de Decisão
+random_search_arvore = RandomizedSearchCV(DecisionTreeClassifier(), param_distributions=param_dist_arvore, n_iter=100, cv=5, random_state=42)
+train_evaluate_model(random_search_arvore, X_train, y_train, X_test, y_test)
+
+# Parâmetros para Random Search na Rede Neural
+param_dist_mlp = {
+    "hidden_layer_sizes": [(randint(50, 100).rvs(), randint(10, 50).rvs(), randint(10, 50).rvs()) for _ in range(10)],
+    "learning_rate_init": [0.001, 0.01, 0.1]
+}
+
+
+# Random Search na Rede Neural
+random_search_mlp = RandomizedSearchCV(MLPClassifier(max_iter=1000), param_distributions=param_dist_mlp, n_iter=30, cv=5, random_state=42)
+train_evaluate_model(random_search_mlp, X_train_scaled, y_train, X_test_scaled, y_test)
